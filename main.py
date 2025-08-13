@@ -1,41 +1,41 @@
-# Modifié main.py
-ImporterImporter OS.
-ImporterImporter  des systèmes.
-# NE CHANGE PAS ÇA !!!
-Syssys..path.insert (0, os.path.dirname (os.path.dirname (__file__)))path.insert (0, os.path.dirname (os.path.dirname (__file__)))
-Importer logging.
-DemandesDemandesDemandes d'importation.importation.'importation.importation.'importation.importation.'importation.importation.
-à  partir de dotenv  import load_dotenv.partir de dotenv import load_dotenv.import load_dotenv.partir de dotenv import load_dotenv.
-à  
- . flask_cors.   
-    à   partir de src. routes.verifier import verifier_bppartir. de src.routes.verifier import verifier_bproutes.verifier import verifier_bppartir. de src.routes.verifier import verifier_bp routes.verifier import verifier_bppartir. de src.routes.verifier import verifier_bproutes.verifier import verifier_bppartir. de src.routes.verifier import verifier_bp
+# Modified main.py
+import os
+import sys
+# DON'T CHANGE THIS !!!
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+import logging
+import requests
+from dotenv import load_dotenv
+from flask import Flask, send_from_directory
+from flask_cors import CORS
+from src.routes.verifier import verifier_bp
 
-. = Flask (__name__, static_folder=os.path.join (os.path.dirname (__file__), 'static'))Flask (__name__, static_folder=os.path.join (os.path.dirname (__file__), 'static'))
-..config..['secret_key' = ''ASDF..#FGSgvasgf$5$WGT'config['secret_key' = ''asdf#FGSgvasgf$5$WGT'config..['secret_key' = ''ASDF..#FGSgvasgf$5$WGT'config['secret_key' = ''asdf#FGSgvasgf$5$WGT'
+app = Flask(__name__, static_folder=os.path.join(os.path.dirname(__file__), 'static'))
+app.config['SECRET_KEY'] = 'asdf#FGSgvasgf$5$WGT'
 
-# Activer CORS Pour ? ? toutes les.. routes
-CORS (app, origins="*")"*")
+# Activer CORS pour toutes les routes
+CORS(app, origins="*")
 
-Appapp..register_blueprint (verifier_bp, url_prefix=(verifier_bp, url_prefix='/.'/.api''
+app.register_blueprint(verifier_bp, url_prefix='/api')
 
-# Supprimer la configuration de SQLAlchemy car elle n'est pas utilisée dans le plan du vérificateurSupprimer
-# Si nécessaire pour d'autres plans., rajouter avec les importations approprié.esautres plans., rajouter avec les importations approprié.es
+# Removed SQLAlchemy configuration as it's not used in the verifier blueprint
+# If needed for other blueprints, re-add it with proper imports
 
-@app.Route.. ('/', Défauts.éfauts={'chemin.':)App..Route. ('/', defaults={'path':)
-@app.Route.. ('/<path :path>') app.route ('/<path :path>')
-Def Servir.. (chemin) :
- static_folder_path = 
-   si static_folder_path. est Aucun :    
-  renvoyer "Dossier statique non configuré", 404   
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    static_folder_path = app.static_folder
+    if static_folder_path is None:
+        return "Static folder not configured", 404
 
-   if chemin. !="" et OS..chemin..existe.. (OS..chemin..Rejoignez-nous !-nous ! (static_folder_path, path)) :    
- return send_from_directory (static_folder_path, path) . 
- Autre : 
-  index_path = OS..chemin..Rejoignez-nous !-nous ! (static_folder_path, 'Index...html') os.path.join (static_folder_path, 'index.html')   
- si os.path.exists (index_path) : 
- return send_from_directory (static_folder_path, 'index.html') 
- Autre : 
-  retour "index.html non trouvé", 404   
+    if path != "" and os.path.exists(os.path.join(static_folder_path, path)):
+        return send_from_directory(static_folder_path, path)
+    else:
+        index_path = os.path.join(static_folder_path, 'index.html')
+        if os.path.exists(index_path):
+            return send_from_directory(static_folder_path, 'index.html')
+        else:
+            return "index.html not found", 404
 
-SISI __name__ == '__main__':
- app.run (host='0.0.0.0', port=5002, debug=True 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5002, debug=True)
